@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MiniUpgradeSystem
@@ -13,8 +14,9 @@ namespace MiniUpgradeSystem
 
         public static float ApplyUpgrade(string entityId, float value, UpgradeType upgradeType)
         {
-            var multiplier = ActiveUpgradeSystems.Sum(system => system.Value.GetUpgrade(entityId, upgradeType));
-            return value * (1f + (upgradeType.Direction == UpgradeDirection.Increase ? multiplier : -multiplier));
+            var multiplier = ActiveUpgradeSystems.Aggregate(1.0f, 
+                (x, y) => x * y.Value.GetUpgrade(entityId, upgradeType));
+            return value * multiplier;
         }
 
         public static void OnUpgradeItemStatusChange(SystemType type, UpgradeItem item, bool isActive)
@@ -39,12 +41,20 @@ namespace MiniUpgradeSystem
                 Title = "Forever Double Profit",
                 AffectedEntityIds = new List<string> { "stand_one", "stand_two" },
                 Type = UpgradeType.Price,
-                Multiplier = 1f
+                Multiplier = 2f
             },
             new UpgradeItem
             {
                 Id = "no_ads",
                 Title = "Remove Ads",
+                AffectedEntityIds = new List<string> { "stand_one", "stand_two" },
+                Type = UpgradeType.ProductionTime,
+                Multiplier = 0.5f
+            },
+            new UpgradeItem
+            {
+                Id = "no_ads_2",
+                Title = "Remove Ads 2",
                 AffectedEntityIds = new List<string> { "stand_one", "stand_two" },
                 Type = UpgradeType.ProductionTime,
                 Multiplier = 0.5f
@@ -59,7 +69,7 @@ namespace MiniUpgradeSystem
                 Title = "Fancy Skin",
                 AffectedEntityIds = new List<string> { "stand_one" },
                 Type = UpgradeType.Price,
-                Multiplier = 0.2f
+                Multiplier = 1.2f
             },
             new UpgradeItem
             {
@@ -67,7 +77,7 @@ namespace MiniUpgradeSystem
                 Title = "Halloween Skin",
                 AffectedEntityIds = new List<string> { "stand_two" },
                 Type = UpgradeType.ProductionTime,
-                Multiplier = 0.3f
+                Multiplier = 0.7f
             },
             new UpgradeItem
             {
@@ -75,7 +85,7 @@ namespace MiniUpgradeSystem
                 Title = "Roblox Skin",
                 AffectedEntityIds = new List<string> { "stand_one" },
                 Type = UpgradeType.Price,
-                Multiplier = 0.3f
+                Multiplier = 1.3f
             }
         };
 

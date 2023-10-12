@@ -12,7 +12,7 @@ namespace MiniUpgradeSystem
             var sum = UpgradeItems
                 .Where(item => item.Value.AffectedEntityIds.Contains(entityId)
                                && item.Value.Type == upgradeType)
-                .Sum(item => item.Value.Multiplier);
+                .Aggregate(1.0f, (x, y) => x * y.Value.Multiplier);
 
             return sum;
         }
